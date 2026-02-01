@@ -1,9 +1,12 @@
+import { getTopAssets } from "@/actions/assets"
 import { HeroSection } from "./_components/sections/hero-section"
 
-export default function MarketingPage() {
+export default async function MarketingPage() {
+  const assets = await getTopAssets(8)
+
   return (
     <main className="min-h-screen bg-[#0a0a0f]">
-      <HeroSection />
+      <HeroSection assets={assets} />
     </main>
   )
 }

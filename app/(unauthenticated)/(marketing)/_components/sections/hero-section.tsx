@@ -1,101 +1,21 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
+import { SelectAsset } from "@/db/schema/assets"
 import { motion } from "framer-motion"
 import {
   ArrowDownRight,
   ArrowUpRight,
-  Bitcoin,
+  Coins,
   DollarSign,
   Gem,
   TrendingUp
 } from "lucide-react"
 import { SectionWrapper } from "./section-wrapper"
 
-interface Asset {
-  name: string
-  symbol: string
-  price: string
-  change: number
-  volume: string
-  icon: React.ReactNode
-  category: "crypto" | "stock" | "commodity" | "forex"
+interface HeroSectionProps {
+  assets: SelectAsset[]
 }
-
-const topAssets: Asset[] = [
-  {
-    name: "Bitcoin",
-    symbol: "BTC",
-    price: "$97,432.18",
-    change: 12.4,
-    volume: "$48.2B",
-    icon: <Bitcoin className="size-5" />,
-    category: "crypto"
-  },
-  {
-    name: "NVIDIA",
-    symbol: "NVDA",
-    price: "$892.45",
-    change: 8.7,
-    volume: "$32.1B",
-    icon: <TrendingUp className="size-5" />,
-    category: "stock"
-  },
-  {
-    name: "Ethereum",
-    symbol: "ETH",
-    price: "$3,847.92",
-    change: 6.2,
-    volume: "$18.4B",
-    icon: <Gem className="size-5" />,
-    category: "crypto"
-  },
-  {
-    name: "Gold",
-    symbol: "XAU",
-    price: "$2,089.30",
-    change: 3.1,
-    volume: "$142.8B",
-    icon: <DollarSign className="size-5" />,
-    category: "commodity"
-  },
-  {
-    name: "Apple",
-    symbol: "AAPL",
-    price: "$198.76",
-    change: 2.8,
-    volume: "$8.9B",
-    icon: <TrendingUp className="size-5" />,
-    category: "stock"
-  },
-  {
-    name: "Solana",
-    symbol: "SOL",
-    price: "$187.43",
-    change: 15.6,
-    volume: "$4.2B",
-    icon: <Gem className="size-5" />,
-    category: "crypto"
-  },
-  {
-    name: "Tesla",
-    symbol: "TSLA",
-    price: "$421.32",
-    change: -2.1,
-    volume: "$22.7B",
-    icon: <TrendingUp className="size-5" />,
-    category: "stock"
-  },
-  {
-    name: "Microsoft",
-    symbol: "MSFT",
-    price: "$432.18",
-    change: 4.2,
-    volume: "$12.3B",
-    icon: <TrendingUp className="size-5" />,
-    category: "stock"
-  }
-]
 
 const categoryColors = {
   crypto: "from-orange-500 to-yellow-500",
@@ -104,8 +24,17 @@ const categoryColors = {
   forex: "from-green-500 to-emerald-500"
 }
 
-function AssetRow({ asset, index }: { asset: Asset; index: number }) {
-  const isPositive = asset.change >= 0
+const categoryIcons = {
+  crypto: <Gem className="size-5" />,
+  stock: <TrendingUp className="size-5" />,
+  commodity: <DollarSign className="size-5" />,
+  forex: <Coins className="size-5" />
+}
+
+function AssetRow({ asset, index }: { asset: SelectAsset; index: number }) {
+  const change = parseFloat(asset.change24h)
+  const isPositive = change >= 0
+  const price = parseFloat(asset.price)
 
   return (
     <motion.div
@@ -121,7 +50,7 @@ function AssetRow({ asset, index }: { asset: Asset; index: number }) {
             <div
               className={`flex size-10 items-center justify-center rounded-xl bg-gradient-to-br ${categoryColors[asset.category]} text-white shadow-lg`}
             >
-              {asset.icon}
+              {categoryIcons[asset.category]}
             </div>
             <motion.div
               className={`absolute -right-0.5 -top-0.5 size-2.5 rounded-full ${isPositive ? "bg-green-400" : "bg-red-400"}`}
@@ -150,7 +79,7 @@ function AssetRow({ asset, index }: { asset: Asset; index: number }) {
             transition={{ duration: 3, repeat: Infinity }}
           >
             <div className="font-mono text-lg font-semibold text-white">
-              {asset.price}
+              ${price.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
           </motion.div>
 
@@ -168,7 +97,7 @@ function AssetRow({ asset, index }: { asset: Asset; index: number }) {
             )}
             <span className="font-mono text-sm font-medium">
               {isPositive ? "+" : ""}
-              {asset.change}%
+              {change.toFixed(2)}%
             </span>
           </div>
         </div>
@@ -177,7 +106,7 @@ function AssetRow({ asset, index }: { asset: Asset; index: number }) {
   )
 }
 
-export function HeroSection() {
+export function HeroSection({ assets }: HeroSectionProps) {
   return (
     <SectionWrapper className="relative min-h-screen overflow-hidden py-8 sm:py-16">
       {/* Animated gradient background */}
@@ -321,7 +250,7 @@ export function HeroSection() {
                   animate={{ opacity: [1, 0.3, 1] }}
                   transition={{ duration: 1, repeat: Infinity }}
                 />
-                Updating
+                Live
               </Badge>
             </div>
           </div>
@@ -335,15 +264,15 @@ export function HeroSection() {
 
           {/* Asset rows */}
           <div className="divide-y divide-white/5">
-            {topAssets.map((asset, index) => (
-              <AssetRow key={asset.symbol} asset={asset} index={index} />
+            {assets.map((asset, index) => (
+              <AssetRow key={asset.id} asset={asset} index={index} />
             ))}
           </div>
 
           {/* Card footer */}
           <div className="flex items-center justify-between border-t border-white/10 px-6 py-4">
             <span className="text-sm text-white/40">
-              Showing top 8 by 24h performance
+              Showing top {assets.length} by 24h performance
             </span>
             <motion.button
               className="flex items-center gap-2 rounded-lg bg-white/5 px-4 py-2 text-sm text-white/70 transition-colors hover:bg-white/10 hover:text-white"

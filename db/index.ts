@@ -1,6 +1,7 @@
 import { config } from "dotenv"
 import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
+import { assets } from "./schema/assets"
 import { customers } from "./schema/customers"
 
 config({ path: ".env.local" })
@@ -9,7 +10,8 @@ const databaseUrl = process.env.DATABASE_URL
 
 const dbSchema = {
   // tables
-  customers
+  customers,
+  assets
   // relations
 }
 

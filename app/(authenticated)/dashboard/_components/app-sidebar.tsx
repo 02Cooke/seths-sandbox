@@ -1,6 +1,15 @@
 "use client"
 
-import { Link, Settings2, User, Users } from "lucide-react"
+import {
+  BarChart3,
+  Bell,
+  Briefcase,
+  LineChart,
+  Settings2,
+  Star,
+  TrendingUp,
+  Wallet
+} from "lucide-react"
 import * as React from "react"
 
 import {
@@ -29,50 +38,81 @@ export function AppSidebar({
     user: userData,
     teams: [
       {
-        name: "Personal",
-        logo: User,
-        plan: "Account"
-      },
-      {
-        name: "Team 1",
-        logo: Users,
-        plan: "Team"
-      },
-      {
-        name: "Team 2",
-        logo: Users,
-        plan: "Team"
-      },
-      {
-        name: "Team 3",
-        logo: Users,
-        plan: "Team"
+        name: "AlphaWatch",
+        logo: TrendingUp,
+        plan: userData.membership === "pro" ? "Pro" : "Free"
       }
     ],
     navMain: [
       {
-        title: "Nav Item 1",
+        title: "Markets",
         url: "#",
-        icon: Link,
+        icon: LineChart,
         items: [
           {
-            title: "Sub Item 1",
-            url: "/dashboard/nav-item-1"
+            title: "All Assets",
+            url: "/dashboard"
           },
           {
-            title: "Sub Item 2",
-            url: "/dashboard/nav-item-2"
+            title: "Crypto",
+            url: "/dashboard/crypto"
+          },
+          {
+            title: "Stocks",
+            url: "/dashboard/stocks"
+          },
+          {
+            title: "Commodities",
+            url: "/dashboard/commodities"
           }
         ]
       },
       {
-        title: "Nav Item 2",
+        title: "Portfolio",
         url: "#",
-        icon: Link,
+        icon: Briefcase,
         items: [
           {
-            title: "Sub Item 1",
-            url: "/dashboard/nav-item-1"
+            title: "Holdings",
+            url: "/dashboard/holdings"
+          },
+          {
+            title: "Performance",
+            url: "/dashboard/performance"
+          }
+        ]
+      },
+      {
+        title: "Watchlists",
+        url: "#",
+        icon: Star,
+        items: [
+          {
+            title: "My Watchlist",
+            url: "/dashboard/watchlist"
+          },
+          {
+            title: "Top Gainers",
+            url: "/dashboard/gainers"
+          },
+          {
+            title: "Top Losers",
+            url: "/dashboard/losers"
+          }
+        ]
+      },
+      {
+        title: "Analytics",
+        url: "#",
+        icon: BarChart3,
+        items: [
+          {
+            title: "Market Overview",
+            url: "/dashboard/analytics"
+          },
+          {
+            title: "Trends",
+            url: "/dashboard/trends"
           }
         ]
       },
@@ -82,8 +122,16 @@ export function AppSidebar({
         icon: Settings2,
         items: [
           {
-            title: "General",
-            url: "/dashboard/settings"
+            title: "Account",
+            url: "/dashboard/account"
+          },
+          {
+            title: "Billing",
+            url: "/dashboard/billing"
+          },
+          {
+            title: "Alerts",
+            url: "/dashboard/alerts"
           }
         ]
       }

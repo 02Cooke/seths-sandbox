@@ -19,8 +19,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Mckay's App Template",
-  description: "The easiest way to start your next project."
+  title: "AlphaWatch - Top Performing Global Assets",
+  description: "Track the hottest assets across crypto, stocks, and commodities. Real-time market data for the modern investor."
 }
 
 export default function RootLayout({
@@ -34,7 +34,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <TooltipProvider>
               {children}
               <CheckoutRedirect />
