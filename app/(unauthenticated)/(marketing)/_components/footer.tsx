@@ -1,4 +1,4 @@
-import { Github, Instagram, Music2, Youtube } from "lucide-react"
+import { Github, TrendingUp } from "lucide-react"
 import Link from "next/link"
 
 const XLogo = ({ className }: { className?: string }) => (
@@ -14,60 +14,64 @@ const XLogo = ({ className }: { className?: string }) => (
 
 export function Footer() {
   const footerNavigation = {
-    product: [
-      { name: "Features", href: "#features" },
-      { name: "Pricing", href: "#pricing" },
-      { name: "Testimonials", href: "#testimonials" },
-      { name: "Integration", href: "#" }
+    markets: [
+      { name: "Crypto", href: "#" },
+      { name: "Stocks", href: "#" },
+      { name: "Forex", href: "#" },
+      { name: "Commodities", href: "#" }
     ],
     company: [
-      { name: "About", href: "#about" },
-      { name: "Blog", href: "#" },
+      { name: "About", href: "/about" },
+      { name: "Pricing", href: "/pricing" },
       { name: "Careers", href: "#" },
-      { name: "Press", href: "#" }
+      { name: "Contact", href: "/contact" }
     ],
     resources: [
-      { name: "Documentation", href: "#" },
-      { name: "Guides", href: "#" },
-      { name: "Help Center", href: "#" },
-      { name: "Community", href: "#" }
+      { name: "API Docs", href: "#" },
+      { name: "Market Analysis", href: "#" },
+      { name: "Trading Guides", href: "#" },
+      { name: "Status", href: "#" }
     ],
     legal: [
       { name: "Privacy", href: "#" },
       { name: "Terms", href: "#" },
-      { name: "Cookie Policy", href: "#" },
-      { name: "License", href: "#" }
+      { name: "Risk Disclosure", href: "#" },
+      { name: "Cookies", href: "#" }
     ]
   }
 
   const socialLinks = [
     { name: "X", href: "https://x.com", icon: XLogo },
-    { name: "YouTube", href: "https://youtube.com", icon: Youtube },
-    { name: "Instagram", href: "https://instagram.com", icon: Instagram },
-    { name: "TikTok", href: "https://tiktok.com", icon: Music2 },
     { name: "GitHub", href: "https://github.com", icon: Github }
   ]
 
   return (
-    <footer className="bg-muted/50" aria-labelledby="footer-heading">
+    <footer
+      className="border-t border-white/10 bg-[#0a0a0f]"
+      aria-labelledby="footer-heading"
+    >
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
       <div className="mx-auto max-w-7xl px-6 pt-16 pb-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
-            <Link href="/" className="text-xl font-bold">
-              Company
+            <Link href="/" className="flex items-center gap-2">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+                <TrendingUp className="size-4 text-white" />
+              </div>
+              <span className="text-xl font-bold text-white">AlphaWatch</span>
             </Link>
-            <p className="text-muted-foreground text-sm leading-6">
-              Your company description here.
+            <p className="text-sm leading-6 text-white/50">
+              Real-time market intelligence for the modern investor. Track top
+              performing assets across crypto, stocks, and commodities.
             </p>
             <div className="flex space-x-6">
               {socialLinks.map(item => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-white/40 transition-colors hover:text-white"
                 >
                   <span className="sr-only">{item.name}</span>
                   <item.icon className="h-5 w-5" />
@@ -78,15 +82,15 @@ export function Footer() {
           <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-foreground text-sm leading-6 font-semibold">
-                  Product
+                <h3 className="text-sm font-semibold leading-6 text-white">
+                  Markets
                 </h3>
                 <ul role="list" className="mt-6 space-y-4">
-                  {footerNavigation.product.map(item => (
+                  {footerNavigation.markets.map(item => (
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-muted-foreground hover:text-foreground text-sm leading-6"
+                        className="text-sm leading-6 text-white/50 transition-colors hover:text-white"
                       >
                         {item.name}
                       </Link>
@@ -95,7 +99,7 @@ export function Footer() {
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="text-foreground text-sm leading-6 font-semibold">
+                <h3 className="text-sm font-semibold leading-6 text-white">
                   Company
                 </h3>
                 <ul role="list" className="mt-6 space-y-4">
@@ -103,7 +107,7 @@ export function Footer() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-muted-foreground hover:text-foreground text-sm leading-6"
+                        className="text-sm leading-6 text-white/50 transition-colors hover:text-white"
                       >
                         {item.name}
                       </Link>
@@ -114,7 +118,7 @@ export function Footer() {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-foreground text-sm leading-6 font-semibold">
+                <h3 className="text-sm font-semibold leading-6 text-white">
                   Resources
                 </h3>
                 <ul role="list" className="mt-6 space-y-4">
@@ -122,7 +126,7 @@ export function Footer() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-muted-foreground hover:text-foreground text-sm leading-6"
+                        className="text-sm leading-6 text-white/50 transition-colors hover:text-white"
                       >
                         {item.name}
                       </Link>
@@ -131,7 +135,7 @@ export function Footer() {
                 </ul>
               </div>
               <div className="mt-10 md:mt-0">
-                <h3 className="text-foreground text-sm leading-6 font-semibold">
+                <h3 className="text-sm font-semibold leading-6 text-white">
                   Legal
                 </h3>
                 <ul role="list" className="mt-6 space-y-4">
@@ -139,7 +143,7 @@ export function Footer() {
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="text-muted-foreground hover:text-foreground text-sm leading-6"
+                        className="text-sm leading-6 text-white/50 transition-colors hover:text-white"
                       >
                         {item.name}
                       </Link>
@@ -150,10 +154,15 @@ export function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-border mt-16 border-t pt-8 sm:mt-20 lg:mt-24">
-          <p className="text-muted-foreground text-xs leading-5">
-            &copy; {new Date().getFullYear()} Company, Inc. All rights reserved.
-          </p>
+        <div className="mt-16 border-t border-white/10 pt-8 sm:mt-20 lg:mt-24">
+          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <p className="text-xs leading-5 text-white/40">
+              &copy; {new Date().getFullYear()} AlphaWatch. All rights reserved.
+            </p>
+            <p className="text-xs leading-5 text-white/30">
+              Market data for informational purposes only. Not financial advice.
+            </p>
+          </div>
         </div>
       </div>
     </footer>

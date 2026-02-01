@@ -6,9 +6,6 @@ import { customers } from "./schema/customers"
 config({ path: ".env.local" })
 
 const databaseUrl = process.env.DATABASE_URL
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is not set")
-}
 
 const dbSchema = {
   // tables
@@ -21,4 +18,23 @@ function initializeDb(url: string) {
   return drizzlePostgres(client, { schema: dbSchema })
 }
 
-export const db = initializeDb(databaseUrl)
+type Db = ReturnType<typeof initializeDb>
+
+let _db: Db | null = null
+
+function getDb(): Db {
+  if (!databaseUrl) {
+    throw new Error("DATABASE_URL is not set")
+  }
+  if (!_db) {
+    _db = initializeDb(databaseUrl)
+  }
+  return _db
+}
+
+/** Lazy db: only connects and throws when actually used, so the app can run without DATABASE_URL (e.g. marketing pages). */
+export const db = new Proxy({} as Db, {
+  get(_, prop) {
+    return (getDb() as unknown as Record<string | symbol, unknown>)[prop]
+  }
+})
