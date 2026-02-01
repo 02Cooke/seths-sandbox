@@ -3,6 +3,8 @@ import { Footer } from "./_components/footer"
 import { HeaderWrapper } from "./_components/header-wrapper"
 import { ScrollIndicator } from "./_components/scroll-indicator"
 
+export const dynamic = "force-dynamic"
+
 export default async function MarketingLayout({
   children
 }: {
