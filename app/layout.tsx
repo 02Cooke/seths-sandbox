@@ -20,7 +20,21 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "AlphaWatch - Top Performing Global Assets",
-  description: "Track the hottest assets across crypto, stocks, and commodities. Real-time market data for the modern investor."
+  description:
+    "Track the hottest assets across crypto, stocks, and commodities. Real-time market data for the modern investor."
+}
+
+function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+      <TooltipProvider>
+        {children}
+        <CheckoutRedirect />
+        <TailwindIndicator />
+        <Toaster />
+      </TooltipProvider>
+    </ThemeProvider>
+  )
 }
 
 export default function RootLayout({
@@ -28,23 +42,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return (
-    <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
-          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-            <TooltipProvider>
-              {children}
-              <CheckoutRedirect />
+  const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
-              <TailwindIndicator />
-              <Toaster />
-            </TooltipProvider>
-          </ThemeProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        {hasClerkKey ? (
+          <ClerkProvider>
+            <Providers>{children}</Providers>
+          </ClerkProvider>
+        ) : (
+          <Providers>{children}</Providers>
+        )}
+      </body>
+    </html>
   )
 }
