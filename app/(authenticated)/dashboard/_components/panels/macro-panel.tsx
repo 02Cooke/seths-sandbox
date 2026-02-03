@@ -72,7 +72,7 @@ export function MacroPanel({ indicators, history }: MacroPanelProps) {
         </div>
       }
     >
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {indicators.map((indicator) => {
           const indicatorHistory = history[indicator.name] || []
           const change = getChange(indicator)

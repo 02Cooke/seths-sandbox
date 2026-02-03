@@ -76,7 +76,7 @@ export function PerformancePanel({
     >
       <div className="space-y-6">
         {/* Return Summary Cards */}
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-4">
           {/* YTD Return */}
           <div className="rounded-lg border bg-card p-4">
             <div className="text-xs text-muted-foreground">YTD Return</div>

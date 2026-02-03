@@ -126,7 +126,7 @@ export function RiskPanel({
     <PanelCard title="Risk Snapshot" subtitle="Concentration and liquidity risk">
       <div className="space-y-6">
         {/* Risk Metrics Grid */}
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
           {/* Top 5 Concentration */}
           <div className={`rounded-lg p-3 ${top5Status.bg}`}>
             <div className={`flex items-center gap-2 ${top5Status.color}`}>
@@ -184,7 +184,7 @@ export function RiskPanel({
           <div className="mb-2 text-sm text-muted-foreground">
             Largest Positions
           </div>
-          <div className="grid gap-2 md:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
             {top5.map((holding, index) => {
               const pct =
                 totalValue > 0 ? (holding.currentValue / totalValue) * 100 : 0
