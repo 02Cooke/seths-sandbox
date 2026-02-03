@@ -1,14 +1,13 @@
 "use client"
 
 import {
-  BarChart3,
-  Bell,
   Briefcase,
+  CreditCard,
+  LayoutDashboard,
   LineChart,
   Settings2,
-  Star,
   TrendingUp,
-  Wallet
+  User
 } from "lucide-react"
 import * as React from "react"
 
@@ -38,40 +37,21 @@ export function AppSidebar({
     user: userData,
     teams: [
       {
-        name: "AlphaWatch",
-        logo: TrendingUp,
-        plan: userData.membership === "pro" ? "Pro" : "Free"
+        name: "Family Office",
+        logo: Briefcase,
+        plan: "Command Center"
       }
     ],
     navMain: [
       {
-        title: "Markets",
-        url: "#",
-        icon: LineChart,
-        items: [
-          {
-            title: "All Assets",
-            url: "/dashboard"
-          },
-          {
-            title: "Crypto",
-            url: "/dashboard/crypto"
-          },
-          {
-            title: "Stocks",
-            url: "/dashboard/stocks"
-          },
-          {
-            title: "Commodities",
-            url: "/dashboard/commodities"
-          }
-        ]
-      },
-      {
         title: "Portfolio",
         url: "#",
-        icon: Briefcase,
+        icon: LayoutDashboard,
         items: [
+          {
+            title: "Overview",
+            url: "/dashboard"
+          },
           {
             title: "Holdings",
             url: "/dashboard/holdings"
@@ -79,40 +59,6 @@ export function AppSidebar({
           {
             title: "Performance",
             url: "/dashboard/performance"
-          }
-        ]
-      },
-      {
-        title: "Watchlists",
-        url: "#",
-        icon: Star,
-        items: [
-          {
-            title: "My Watchlist",
-            url: "/dashboard/watchlist"
-          },
-          {
-            title: "Top Gainers",
-            url: "/dashboard/gainers"
-          },
-          {
-            title: "Top Losers",
-            url: "/dashboard/losers"
-          }
-        ]
-      },
-      {
-        title: "Analytics",
-        url: "#",
-        icon: BarChart3,
-        items: [
-          {
-            title: "Market Overview",
-            url: "/dashboard/analytics"
-          },
-          {
-            title: "Trends",
-            url: "/dashboard/trends"
           }
         ]
       },
@@ -128,10 +74,6 @@ export function AppSidebar({
           {
             title: "Billing",
             url: "/dashboard/billing"
-          },
-          {
-            title: "Alerts",
-            url: "/dashboard/alerts"
           }
         ]
       }

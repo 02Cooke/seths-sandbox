@@ -1,12 +1,5 @@
-import { getTopAssets } from "@/actions/assets"
-import { HeroSection } from "./_components/sections/hero-section"
+import { redirect } from "next/navigation"
 
-export default async function MarketingPage() {
-  const assets = await getTopAssets(8)
-
-  return (
-    <main className="min-h-screen bg-[#0a0a0f]">
-      <HeroSection assets={assets} />
-    </main>
-  )
+export default function MarketingPage() {
+  redirect("/login")
 }
