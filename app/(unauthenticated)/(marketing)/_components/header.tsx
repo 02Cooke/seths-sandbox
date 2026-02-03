@@ -7,6 +7,9 @@ import { Menu, X, Sparkles, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 
+// Check if Clerk is configured (this env var is exposed to client)
+const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
 interface HeaderProps {
   userMembership: SelectCustomer["membership"] | null
 }
@@ -78,42 +81,53 @@ export function Header({ userMembership }: HeaderProps) {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
-            <SignedOut>
-              <Button
-                variant="ghost"
-                asChild
-                className="text-white/70 hover:bg-white/10 hover:text-white"
-              >
-                <Link href="/login">Log in</Link>
-              </Button>
+            {hasClerkKey ? (
+              <>
+                <SignedOut>
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className="text-white/70 hover:bg-white/10 hover:text-white"
+                  >
+                    <Link href="/login">Log in</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
+                  >
+                    <Link href="/signup">Get Started</Link>
+                  </Button>
+                </SignedOut>
+                <SignedIn>
+                  {userMembership === "pro" ? (
+                    <Button
+                      asChild
+                      className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
+                    >
+                      <Link href="/dashboard">Dashboard</Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      asChild
+                      className="gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
+                    >
+                      <Link href="/#pricing">
+                        <Sparkles className="h-4 w-4" />
+                        Upgrade
+                      </Link>
+                    </Button>
+                  )}
+                  <UserButton />
+                </SignedIn>
+              </>
+            ) : (
               <Button
                 asChild
                 className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
               >
-                <Link href="/signup">Get Started</Link>
+                <Link href="/dashboard">Dashboard</Link>
               </Button>
-            </SignedOut>
-            <SignedIn>
-              {userMembership === "pro" ? (
-                <Button
-                  asChild
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
-                >
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
-              ) : (
-                <Button
-                  asChild
-                  className="gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700"
-                >
-                  <Link href="/#pricing">
-                    <Sparkles className="h-4 w-4" />
-                    Upgrade
-                  </Link>
-                </Button>
-              )}
-              <UserButton />
-            </SignedIn>
+            )}
           </div>
         </nav>
       </header>
@@ -164,62 +178,78 @@ export function Header({ userMembership }: HeaderProps) {
                   ))}
                 </div>
                 <div className="space-y-3 py-6">
-                  <SignedOut>
-                    <Button
-                      variant="outline"
-                      className="w-full border-white/20 bg-transparent text-white hover:bg-white/10"
-                      asChild
-                    >
-                      <Link
-                        href="/login"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Log in
-                      </Link>
-                    </Button>
+                  {hasClerkKey ? (
+                    <>
+                      <SignedOut>
+                        <Button
+                          variant="outline"
+                          className="w-full border-white/20 bg-transparent text-white hover:bg-white/10"
+                          asChild
+                        >
+                          <Link
+                            href="/login"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Log in
+                          </Link>
+                        </Button>
+                        <Button
+                          className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+                          asChild
+                        >
+                          <Link
+                            href="/signup"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Get Started
+                          </Link>
+                        </Button>
+                      </SignedOut>
+                      <SignedIn>
+                        {userMembership === "pro" ? (
+                          <Button
+                            className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+                            asChild
+                          >
+                            <Link
+                              href="/dashboard"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              Dashboard
+                            </Link>
+                          </Button>
+                        ) : (
+                          <Button
+                            className="w-full gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
+                            asChild
+                          >
+                            <Link
+                              href="/#pricing"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              <Sparkles className="h-4 w-4" />
+                              Upgrade
+                            </Link>
+                          </Button>
+                        )}
+                        <div className="flex justify-center pt-4">
+                          <UserButton />
+                        </div>
+                      </SignedIn>
+                    </>
+                  ) : (
                     <Button
                       className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
                       asChild
                     >
                       <Link
-                        href="/signup"
+                        href="/dashboard"
                         onClick={() => setMobileMenuOpen(false)}
                       >
-                        Get Started
+                        Dashboard
                       </Link>
                     </Button>
-                  </SignedOut>
-                  <SignedIn>
-                    {userMembership === "pro" ? (
-                      <Button
-                        className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
-                        asChild
-                      >
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          Dashboard
-                        </Link>
-                      </Button>
-                    ) : (
-                      <Button
-                        className="w-full gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white"
-                        asChild
-                      >
-                        <Link
-                          href="/#pricing"
-                          onClick={() => setMobileMenuOpen(false)}
-                        >
-                          <Sparkles className="h-4 w-4" />
-                          Upgrade
-                        </Link>
-                      </Button>
-                    )}
-                    <div className="flex justify-center pt-4">
-                      <UserButton />
-                    </div>
-                  </SignedIn>
+                  )}
                 </div>
               </div>
             </div>
