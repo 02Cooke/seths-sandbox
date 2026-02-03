@@ -1,5 +1,8 @@
-import { Globe, TrendingDown, TrendingUp } from "lucide-react"
+"use client"
+
+import { ArrowDown, ArrowUp, Globe } from "lucide-react"
 import { PanelCard } from "./panel-card"
+import { Sparkline } from "./sparkline"
 
 interface MacroIndicator {
   name: string
@@ -9,27 +12,30 @@ interface MacroIndicator {
   source: string | null
 }
 
-interface MacroPanelProps {
-  indicators: MacroIndicator[]
+interface MacroHistory {
+  value: number
+  date: string
 }
 
-export function MacroPanel({ indicators }: MacroPanelProps) {
+interface MacroPanelProps {
+  indicators: MacroIndicator[]
+  history: Record<string, MacroHistory[]>
+}
+
+// Colors for each indicator type
+const indicatorColors: Record<string, string> = {
+  fed_funds: "#3B82F6", // Blue
+  treasury_10y: "#8B5CF6", // Purple
+  cpi_yoy: "#F59E0B" // Amber
+}
+
+export function MacroPanel({ indicators, history }: MacroPanelProps) {
   // Format indicator value based on type
   const formatValue = (indicator: MacroIndicator) => {
     if (indicator.name === "cpi_yoy") {
       return `${indicator.value.toFixed(1)}%`
     }
     return `${indicator.value.toFixed(2)}%`
-  }
-
-  // Determine if the indicator trend is "good" or "bad" based on type
-  // Lower is generally better for rates and inflation
-  const getIndicatorContext = (indicator: MacroIndicator) => {
-    // These are informational - no inherent good/bad
-    return {
-      description: getDescription(indicator.name),
-      icon: indicator.value > 4 ? TrendingUp : TrendingDown
-    }
   }
 
   const getDescription = (name: string) => {
@@ -45,6 +51,16 @@ export function MacroPanel({ indicators }: MacroPanelProps) {
     }
   }
 
+  // Calculate change from first historical value
+  const getChange = (indicator: MacroIndicator) => {
+    const indicatorHistory = history[indicator.name]
+    if (!indicatorHistory || indicatorHistory.length < 2) return null
+
+    const firstValue = indicatorHistory[0].value
+    const change = indicator.value - firstValue
+    return change
+  }
+
   return (
     <PanelCard
       title="Macro Environment"
@@ -52,51 +68,65 @@ export function MacroPanel({ indicators }: MacroPanelProps) {
       action={
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Globe className="size-3" />
-          <span>Updated daily</span>
+          <span>Historical trends</span>
         </div>
       }
     >
       <div className="grid gap-4 md:grid-cols-3">
         {indicators.map((indicator) => {
-          const context = getIndicatorContext(indicator)
+          const indicatorHistory = history[indicator.name] || []
+          const change = getChange(indicator)
+          const color = indicatorColors[indicator.name] || "#6B7280"
+
           return (
             <div
               key={indicator.name}
-              className="rounded-lg border bg-muted/30 p-4"
+              className="rounded-lg border bg-card p-4"
             >
+              {/* Header */}
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-muted-foreground">
                   {indicator.label}
                 </span>
+                {change !== null && (
+                  <div
+                    className={`flex items-center gap-0.5 text-xs font-medium ${
+                      change > 0 ? "text-red-500" : change < 0 ? "text-green-500" : "text-muted-foreground"
+                    }`}
+                  >
+                    {change > 0 ? (
+                      <ArrowUp className="size-3" />
+                    ) : change < 0 ? (
+                      <ArrowDown className="size-3" />
+                    ) : null}
+                    {Math.abs(change).toFixed(2)}
+                  </div>
+                )}
               </div>
+
+              {/* Value */}
               <div className="mt-2 font-mono text-2xl font-bold">
                 {formatValue(indicator)}
               </div>
+
+              {/* Description */}
               <div className="mt-1 text-xs text-muted-foreground">
-                {context.description}
-              </div>
-              <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
-                <span>
-                  As of {new Date(indicator.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                </span>
-                {indicator.source && <span>{indicator.source}</span>}
+                {getDescription(indicator.name)}
               </div>
 
-              {/* Sparkline placeholder */}
-              <div className="mt-3 flex h-8 items-end justify-between gap-0.5">
-                {[...Array(12)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 rounded-t bg-muted"
-                    style={{
-                      height: `${Math.random() * 60 + 40}%`,
-                      opacity: i === 11 ? 1 : 0.5
-                    }}
-                  />
-                ))}
+              {/* Sparkline */}
+              <div className="mt-3">
+                <Sparkline data={indicatorHistory} color={color} height={36} />
               </div>
-              <div className="mt-1 text-center text-[10px] text-muted-foreground">
-                6-month trend (placeholder)
+
+              {/* Footer */}
+              <div className="mt-2 flex items-center justify-between text-[10px] text-muted-foreground">
+                <span>
+                  {indicatorHistory.length > 0
+                    ? `${new Date(indicatorHistory[0].date).toLocaleDateString("en-US", { month: "short", year: "2-digit" })} - ${new Date(indicator.date).toLocaleDateString("en-US", { month: "short", year: "2-digit" })}`
+                    : "No history"}
+                </span>
+                {indicator.source && <span>{indicator.source}</span>}
               </div>
             </div>
           )

@@ -3,7 +3,9 @@ import {
   getDebtSummary,
   getHoldingsWithReturns,
   getLiquidityBreakdown,
+  getMacroHistory,
   getMacroIndicators,
+  getMonthlyReturns,
   getPortfolioInfo,
   getPortfolioSummary
 } from "@/actions/portfolio"
@@ -25,7 +27,9 @@ export default async function DashboardPage() {
     holdings,
     liquidity,
     debt,
-    macro
+    macro,
+    macroHistory,
+    monthlyReturns
   ] = await Promise.all([
     getPortfolioInfo(),
     getPortfolioSummary(),
@@ -33,7 +37,9 @@ export default async function DashboardPage() {
     getHoldingsWithReturns(),
     getLiquidityBreakdown(),
     getDebtSummary(),
-    getMacroIndicators()
+    getMacroIndicators(),
+    getMacroHistory(),
+    getMonthlyReturns()
   ])
 
   // Calculate portfolio-level YTD return (weighted average)
@@ -83,6 +89,7 @@ export default async function DashboardPage() {
       {/* Performance Panel - Full width */}
       <PerformancePanel
         holdings={holdings}
+        monthlyReturns={monthlyReturns}
         portfolioYtdReturn={portfolioYtdReturn}
       />
 
@@ -96,7 +103,7 @@ export default async function DashboardPage() {
         />
 
         {/* Macro Environment */}
-        <MacroPanel indicators={macro} />
+        <MacroPanel indicators={macro} history={macroHistory} />
       </div>
     </div>
   )

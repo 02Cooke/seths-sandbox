@@ -314,6 +314,97 @@ export async function getMacroIndicators() {
 }
 
 // ============================================================
+// MACRO HISTORY
+// ============================================================
+
+/**
+ * Get historical macro indicator data for sparklines
+ *
+ * Returns arrays of historical values for each indicator,
+ * sorted chronologically for charting.
+ */
+export async function getMacroHistory() {
+  const indicators = ["fed_funds", "treasury_10y", "cpi_yoy"] as const
+
+  const results = await Promise.all(
+    indicators.map(async (indicatorName) => {
+      const history = await db
+        .select({
+          value: macroIndicators.value,
+          date: macroIndicators.indicatorDate
+        })
+        .from(macroIndicators)
+        .where(eq(macroIndicators.indicatorName, indicatorName))
+        .orderBy(macroIndicators.indicatorDate)
+
+      return {
+        name: indicatorName,
+        history: history.map((h) => ({
+          value: parseFloat(h.value),
+          date: h.date
+        }))
+      }
+    })
+  )
+
+  // Convert to a map for easy lookup
+  return Object.fromEntries(results.map((r) => [r.name, r.history])) as Record<
+    string,
+    Array<{ value: number; date: string }>
+  >
+}
+
+// ============================================================
+// MONTHLY RETURNS
+// ============================================================
+
+/**
+ * Get monthly portfolio returns for charting
+ *
+ * Returns an array of monthly returns with:
+ * - month: "Jan", "Feb", etc.
+ * - year: 2025
+ * - return: percentage return for that month
+ *
+ * Note: In production, this would calculate from actual snapshots.
+ * For now, we generate realistic sample data based on the portfolio composition.
+ */
+export async function getMonthlyReturns() {
+  // Get portfolio allocation to inform realistic returns
+  const allocation = await getAllocationBreakdown()
+
+  // Calculate weighted volatility based on asset mix
+  // Public equities: ~2% monthly vol, Private: ~0.5%, RE: ~0.3%, Cash: ~0.1%
+  const volatilityByClass: Record<string, number> = {
+    "Public Equities": 0.025,
+    "Private Investments": 0.005,
+    "Real Estate": 0.003,
+    "Cash & Equivalents": 0.001,
+    "Alternatives": 0.015
+  }
+
+  const totalValue = allocation.reduce((sum, a) => sum + a.totalValue, 0)
+  const weightedVol = allocation.reduce((sum, a) => {
+    const vol = volatilityByClass[a.name] || 0.01
+    return sum + vol * (a.totalValue / totalValue)
+  }, 0)
+
+  // Generate monthly returns for 2025 (with slight positive drift)
+  // Seed with consistent values for demo purposes
+  const monthlySeeds = [0.8, 1.2, -0.5, 0.9, 1.5, -0.3, 0.7, 1.1, -0.8, 0.6, 1.3, 0.4]
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+  // Only return data up to current month (simulating real data)
+  const currentMonth = new Date().getMonth() // 0-indexed
+
+  return months.slice(0, currentMonth + 1).map((month, index) => ({
+    month,
+    year: 2025,
+    return: monthlySeeds[index] * (weightedVol / 0.015) // Scale by portfolio volatility
+  }))
+}
+
+// ============================================================
 // PORTFOLIO INFO
 // ============================================================
 

@@ -1,5 +1,8 @@
-import { ArrowDownRight, ArrowUpRight, BarChart3 } from "lucide-react"
+"use client"
+
+import { ArrowDownRight, ArrowUpRight, TrendingUp } from "lucide-react"
 import { PanelCard } from "./panel-card"
+import { MonthlyReturnsChart } from "./monthly-returns-chart"
 
 interface HoldingReturn {
   id: string
@@ -12,13 +15,21 @@ interface HoldingReturn {
   assetClassName: string
 }
 
+interface MonthlyReturn {
+  month: string
+  year: number
+  return: number
+}
+
 interface PerformancePanelProps {
   holdings: HoldingReturn[]
+  monthlyReturns: MonthlyReturn[]
   portfolioYtdReturn?: number
 }
 
 export function PerformancePanel({
   holdings,
+  monthlyReturns,
   portfolioYtdReturn
 }: PerformancePanelProps) {
   // Sort by YTD return for top/bottom performers
@@ -35,41 +46,102 @@ export function PerformancePanel({
     0
   )
 
+  // Calculate average total return (since inception)
+  const holdingsWithTotal = holdings.filter((h) => h.totalReturn !== null)
+  const avgTotalReturn =
+    holdingsWithTotal.length > 0
+      ? holdingsWithTotal.reduce((sum, h) => sum + (h.totalReturn ?? 0), 0) /
+        holdingsWithTotal.length
+      : undefined
+
+  // Get best and worst month from monthly data
+  const bestMonth = monthlyReturns.reduce(
+    (best, m) => (m.return > best.return ? m : best),
+    monthlyReturns[0] || { month: "-", return: 0 }
+  )
+  const worstMonth = monthlyReturns.reduce(
+    (worst, m) => (m.return < worst.return ? m : worst),
+    monthlyReturns[0] || { month: "-", return: 0 }
+  )
+
   return (
     <PanelCard
       title="Performance"
       subtitle="Returns and attribution"
       action={
-        <div className="text-right">
-          <div className="text-xs text-muted-foreground">Portfolio YTD</div>
-          {portfolioYtdReturn !== undefined ? (
-            <div
-              className={`flex items-center gap-1 font-mono text-lg font-bold ${portfolioYtdReturn >= 0 ? "text-green-500" : "text-red-500"}`}
-            >
-              {portfolioYtdReturn >= 0 ? (
-                <ArrowUpRight className="size-4" />
-              ) : (
-                <ArrowDownRight className="size-4" />
-              )}
-              {portfolioYtdReturn >= 0 ? "+" : ""}
-              {portfolioYtdReturn.toFixed(2)}%
-            </div>
-          ) : (
-            <div className="text-sm text-muted-foreground">Calculating...</div>
-          )}
+        <div className="flex items-center gap-2">
+          <TrendingUp className="size-5 text-muted-foreground" />
         </div>
       }
     >
       <div className="space-y-6">
-        {/* Chart placeholder */}
-        <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-muted">
-          <div className="text-center">
-            <BarChart3 className="mx-auto size-8 text-muted-foreground" />
-            <p className="mt-2 text-xs text-muted-foreground">
-              Monthly returns chart coming in Phase 7
-            </p>
+        {/* Return Summary Cards */}
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {/* YTD Return */}
+          <div className="rounded-lg border bg-card p-4">
+            <div className="text-xs text-muted-foreground">YTD Return</div>
+            {portfolioYtdReturn !== undefined ? (
+              <div
+                className={`mt-1 flex items-center gap-1 font-mono text-xl font-bold ${
+                  portfolioYtdReturn >= 0 ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {portfolioYtdReturn >= 0 ? (
+                  <ArrowUpRight className="size-4" />
+                ) : (
+                  <ArrowDownRight className="size-4" />
+                )}
+                {portfolioYtdReturn >= 0 ? "+" : ""}
+                {portfolioYtdReturn.toFixed(2)}%
+              </div>
+            ) : (
+              <div className="mt-1 text-lg text-muted-foreground">--</div>
+            )}
+          </div>
+
+          {/* Total Return (Since Inception) */}
+          <div className="rounded-lg border bg-card p-4">
+            <div className="text-xs text-muted-foreground">Avg Total Return</div>
+            {avgTotalReturn !== undefined ? (
+              <div
+                className={`mt-1 flex items-center gap-1 font-mono text-xl font-bold ${
+                  avgTotalReturn >= 0 ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {avgTotalReturn >= 0 ? (
+                  <ArrowUpRight className="size-4" />
+                ) : (
+                  <ArrowDownRight className="size-4" />
+                )}
+                {avgTotalReturn >= 0 ? "+" : ""}
+                {avgTotalReturn.toFixed(1)}%
+              </div>
+            ) : (
+              <div className="mt-1 text-lg text-muted-foreground">--</div>
+            )}
+          </div>
+
+          {/* Best Month */}
+          <div className="rounded-lg border bg-card p-4">
+            <div className="text-xs text-muted-foreground">Best Month</div>
+            <div className="mt-1 font-mono text-xl font-bold text-green-500">
+              +{bestMonth.return.toFixed(1)}%
+            </div>
+            <div className="text-xs text-muted-foreground">{bestMonth.month}</div>
+          </div>
+
+          {/* Worst Month */}
+          <div className="rounded-lg border bg-card p-4">
+            <div className="text-xs text-muted-foreground">Worst Month</div>
+            <div className="mt-1 font-mono text-xl font-bold text-red-500">
+              {worstMonth.return.toFixed(1)}%
+            </div>
+            <div className="text-xs text-muted-foreground">{worstMonth.month}</div>
           </div>
         </div>
+
+        {/* Monthly Returns Chart */}
+        <MonthlyReturnsChart data={monthlyReturns} />
 
         {/* Top/Bottom Performers */}
         <div className="grid gap-4 md:grid-cols-2">
@@ -132,16 +204,28 @@ export function PerformancePanel({
 
         {/* Unrealized Gain Summary */}
         <div className="rounded-lg bg-muted/50 p-4">
-          <div className="text-sm text-muted-foreground">
-            Total Unrealized Gain/Loss
-          </div>
-          <div
-            className={`font-mono text-2xl font-bold ${totalUnrealizedGain >= 0 ? "text-green-500" : "text-red-500"}`}
-          >
-            {totalUnrealizedGain >= 0 ? "+" : ""}$
-            {totalUnrealizedGain.toLocaleString("en-US", {
-              maximumFractionDigits: 0
-            })}
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm text-muted-foreground">
+                Total Unrealized Gain/Loss
+              </div>
+              <div
+                className={`font-mono text-2xl font-bold ${
+                  totalUnrealizedGain >= 0 ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {totalUnrealizedGain >= 0 ? "+" : ""}$
+                {totalUnrealizedGain.toLocaleString("en-US", {
+                  maximumFractionDigits: 0
+                })}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-sm text-muted-foreground">Holdings with Gains</div>
+              <div className="font-mono text-lg font-semibold">
+                {holdings.filter((h) => h.unrealizedGain > 0).length} / {holdings.length}
+              </div>
+            </div>
           </div>
         </div>
       </div>
