@@ -5,7 +5,19 @@ import { useAuth } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
+// Check if Clerk is configured
+const hasClerkKey = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+
 export function CheckoutRedirect() {
+  // Skip entirely if Clerk isn't configured
+  if (!hasClerkKey) {
+    return null
+  }
+
+  return <CheckoutRedirectInner />
+}
+
+function CheckoutRedirectInner() {
   const { isSignedIn } = useAuth()
   const [hasChecked, setHasChecked] = useState(false)
 
