@@ -9,7 +9,6 @@
  * - This lets pages that don't need the database still work
  */
 
-import { config } from "dotenv"
 import { drizzle as drizzlePostgres } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
 
@@ -25,11 +24,6 @@ import { holdings } from "./schema/holdings"
 import { macroIndicators } from "./schema/macro-indicators"
 import { performanceSnapshots } from "./schema/performance-snapshots"
 import { portfolios } from "./schema/portfolios"
-
-// Load environment variables from .env.local
-config({ path: ".env.local" })
-
-const databaseUrl = process.env.DATABASE_URL
 
 // All tables registered with the database
 const dbSchema = {
@@ -47,7 +41,12 @@ const dbSchema = {
 }
 
 function initializeDb(url: string) {
-  const client = postgres(url, { prepare: false })
+  const client = postgres(url, {
+    prepare: false,
+    idle_timeout: 20,
+    connect_timeout: 30,
+    max: 5
+  })
   return drizzlePostgres(client, { schema: dbSchema })
 }
 
@@ -56,6 +55,8 @@ type Db = ReturnType<typeof initializeDb>
 let _db: Db | null = null
 
 function getDb(): Db {
+  // Read DATABASE_URL at runtime, not at module load time
+  const databaseUrl = process.env.DATABASE_URL
   if (!databaseUrl) {
     throw new Error("DATABASE_URL is not set")
   }

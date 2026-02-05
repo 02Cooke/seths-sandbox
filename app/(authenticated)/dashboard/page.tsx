@@ -18,29 +18,19 @@ import {
   RiskPanel
 } from "./_components/panels"
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardPage() {
-  // Fetch all data in parallel for performance
-  const [
-    portfolioInfo,
-    summary,
-    allocation,
-    holdings,
-    liquidity,
-    debt,
-    macro,
-    macroHistory,
-    monthlyReturns
-  ] = await Promise.all([
-    getPortfolioInfo(),
-    getPortfolioSummary(),
-    getAllocationBreakdown(),
-    getHoldingsWithReturns(),
-    getLiquidityBreakdown(),
-    getDebtSummary(),
-    getMacroIndicators(),
-    getMacroHistory(),
-    getMonthlyReturns()
-  ])
+  // Fetch data SEQUENTIALLY to avoid connection pool issues
+  const portfolioInfo = await getPortfolioInfo()
+  const summary = await getPortfolioSummary()
+  const allocation = await getAllocationBreakdown()
+  const holdings = await getHoldingsWithReturns()
+  const liquidity = await getLiquidityBreakdown()
+  const debt = await getDebtSummary()
+  const macro = await getMacroIndicators()
+  const macroHistory = await getMacroHistory()
+  const monthlyReturns = await getMonthlyReturns()
 
   // Calculate portfolio-level YTD return (weighted average)
   const holdingsWithYtd = holdings.filter((h) => h.ytdReturn !== null)
