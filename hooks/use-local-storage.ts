@@ -6,18 +6,17 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === "undefined") {
-      return initialValue;
-    }
-
     try {
-      // Get from local storage by key
-      const item = window.localStorage.getItem(key);
-      // Parse stored json or if none return initialValue
+      if (typeof window === "undefined") {
+        return initialValue;
+      }
+      const storage = window.localStorage;
+      if (!storage || typeof storage.getItem !== "function") {
+        return initialValue;
+      }
+      const item = storage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      // If error also return initialValue
-      console.error(`Error reading localStorage key "${key}":`, error);
+    } catch {
       return initialValue;
     }
   });
@@ -32,9 +31,14 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       // Save state
       setStoredValue(valueToStore);
 
-      // Save to local storage
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+      try {
+        const storage =
+          typeof window !== "undefined" ? window.localStorage : null;
+        if (storage && typeof storage.setItem === "function") {
+          storage.setItem(key, JSON.stringify(valueToStore));
+        }
+      } catch {
+        // Ignore localStorage errors (e.g. private mode, quota, or broken Node polyfill)
       }
     } catch (error) {
       // A more advanced implementation would handle the error case

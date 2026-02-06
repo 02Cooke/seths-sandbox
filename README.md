@@ -47,7 +47,44 @@ NEXT_PUBLIC_STRIPE_PAYMENT_LINK_MONTHLY=
 
 ## Setup
 
-1. Clone the repository
-2. Copy `.env.example` to `.env.local` and fill in the environment variables from above
-3. Run `npm install` to install dependencies
-4. Run `npm run dev` to run the app locally
+### 1. Install Node.js (if you don’t have it)
+
+You need **Node.js 20+** and npm. Pick one:
+
+- **nvm (recommended):**  
+  `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`  
+  Then in a new terminal: `nvm install 20` and `nvm use 20`
+- **fnm:**  
+  Install from [fnm](https://github.com/Schniz/fnm#installation), then: `fnm install 20` and `fnm use 20`
+- **Direct:**  
+  Download the LTS version from [nodejs.org](https://nodejs.org/)
+
+Check: `node -v` and `npm -v` should run without errors.
+
+### 2. Install dependencies and env
+
+```bash
+# From the project root
+npm install
+cp .env.example .env.local
+```
+
+Edit `.env.local` and add your keys (Clerk, Stripe, and optionally `DATABASE_URL` for Supabase). You can run the app with placeholder env and add real keys later.
+
+### 3. (Optional) Local database
+
+For full app features (e.g. customer data), use a local Supabase DB:
+
+```bash
+npx supabase start
+```
+
+Then set `DATABASE_URL` in `.env.local` (see `.env.example` for the default local URL).
+
+### 4. Run the app
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). You’re done.
