@@ -7,7 +7,7 @@ function getStripeClient(): Stripe {
     throw new Error("STRIPE_SECRET_KEY is not set")
   }
   return new Stripe(stripeSecretKey, {
-    apiVersion: "2025-05-28.basil",
+    apiVersion: "2025-08-27.basil",
     appInfo: {
       name: "Mckay's App Template",
       version: "0.1.0"
